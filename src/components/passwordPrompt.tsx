@@ -5,7 +5,11 @@ import { memo } from "react";
 import crypto from "crypto-js";
 import { useSettings, useUpdateUser } from "@/queries/settings";
 
-export const PasswordPrompt = memo(() => {
+export type PasswordPromptProps = {
+  onPass?: () => void;
+};
+
+export const PasswordPrompt = memo(({ onPass }: PasswordPromptProps) => {
   const { data: settings } = useSettings();
   const { mutate: updateUser } = useUpdateUser();
 
@@ -34,6 +38,8 @@ export const PasswordPrompt = memo(() => {
     updateUser({
       password: values.password,
     });
+
+    onPass?.();
   };
 
   return (

@@ -6,12 +6,12 @@ import { SetURLStep } from "../setURLStep";
 import { UpdateAccountStep } from "../updateSettingsStep";
 import { useAttributesAtom } from "../../jotai/attributesAtom";
 import { useStepAtom } from "../../jotai/stepAtom";
-import { useActionAtom } from "../../jotai/actionAtom";
+import { useMessageAtom } from "../../jotai/messageAtom";
 
 export const AddSelector = memo(() => {
   const { setAttributes } = useAttributesAtom();
   const { step, setStep } = useStepAtom();
-  const { setAction } = useActionAtom();
+  const { setMessage: setAction } = useMessageAtom();
 
   useEffect(() => {
     if (step !== "idle") return;

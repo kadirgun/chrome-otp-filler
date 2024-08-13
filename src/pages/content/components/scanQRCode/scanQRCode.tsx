@@ -3,7 +3,7 @@ import { scanQRCode } from "@/utils/otp";
 import { Box } from "@mantine/core";
 import { useEventListener } from "@reactuses/core";
 import { useAccountsAtom } from "../../jotai/accountsAtom";
-import { useActionAtom } from "../../jotai/actionAtom";
+import { useMessageAtom } from "../../jotai/messageAtom";
 import ReactCrop, { type Crop, type PixelCrop } from "react-image-crop";
 import { showNotification } from "@mantine/notifications";
 
@@ -11,7 +11,7 @@ const overflow = document.body.style.overflow;
 
 export const ScanQRCode = () => {
   const { setAccounts } = useAccountsAtom();
-  const { action, setAction } = useActionAtom();
+  const { message: action, setMessage: setAction } = useMessageAtom();
   const [crop, setCrop] = useState<Crop>();
 
   const onClose = () => {

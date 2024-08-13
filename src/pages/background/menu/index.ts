@@ -67,12 +67,10 @@ export const registerContextMenu = () => {
     } else if (info.menuItemId.toString().startsWith("add-selector")) {
       saveAndSendMessage(tab.id, {
         type: "add-selector",
-        data: undefined,
       });
     } else if (info.menuItemId.toString().startsWith("add-url")) {
       saveAndSendMessage(tab.id, {
         type: "add-url",
-        data: undefined,
       });
     } else if (info.menuItemId === "scan-qrcode") {
       chrome.tabs.captureVisibleTab(tab.windowId, { format: "png" }, (dataUrl) => {
@@ -85,7 +83,6 @@ export const registerContextMenu = () => {
     } else if (info.menuItemId.toString().startsWith("fill-input")) {
       saveAndSendMessage(tab.id, {
         type: "fill-input",
-        data: undefined,
       });
     }
   });

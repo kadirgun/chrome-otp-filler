@@ -1,6 +1,14 @@
 import { atom, useAtom } from "jotai";
 
-export type Step = "idle" | "select-attributes" | "select-account" | "set-url" | "update-account" | "fill" | "finish";
+export type Step =
+  | "idle"
+  | "select-attributes"
+  | "select-account"
+  | "set-url"
+  | "update-account"
+  | "fill"
+  | "finish"
+  | "ask-password";
 
 const stepAtom = atom<Step>("idle");
 

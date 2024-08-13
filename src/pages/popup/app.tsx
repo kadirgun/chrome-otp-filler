@@ -3,6 +3,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AccountsPage } from "./pages/accounts";
 import { IconSettings } from "@tabler/icons-react";
 import { useLogo } from "@/hooks/useLogo";
+import { PasswordGuard } from "@/components/passwordGuard";
 
 const queryClient = new QueryClient();
 
@@ -22,8 +23,10 @@ export const App = () => {
             </Group>
           </AppShell.Header>
           <AppShell.Main component={Stack} p={0} pt={40}>
-            <ScrollArea h={560} scrollbarSize={4} offsetScrollbars>
-              <AccountsPage />
+            <ScrollArea h={560} scrollbarSize={4} offsetScrollbars scrollbars="y">
+              <PasswordGuard h={560}>
+                <AccountsPage />
+              </PasswordGuard>
             </ScrollArea>
           </AppShell.Main>
         </AppShell>

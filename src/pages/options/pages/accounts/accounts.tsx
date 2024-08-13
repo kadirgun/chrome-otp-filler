@@ -1,5 +1,5 @@
-import { Card, Center, Group, SimpleGrid, Stack, Text } from "@mantine/core";
-import { memo, useEffect, useMemo } from "react";
+import { Group, SimpleGrid, Stack } from "@mantine/core";
+import { memo, useMemo } from "react";
 import { AccountProvider } from "./components/account/provider";
 import { useImmer } from "use-immer";
 import { AccountsContext, AccountsOptions } from "@/pages/options/contexts/accounts";
@@ -10,16 +10,12 @@ import { AccountsMenu } from "./components/accountsMenu";
 import { DeleteAccountsModal } from "./components/deleteAccountsModal";
 import { ExportAccountsModal } from "./components/exportAccountsModal";
 import { useAccounts } from "@/queries/accounts";
-import { useSettings, useUser } from "@/queries/settings";
-import { PasswordPrompt } from "@/components/passwordPrompt";
 
 export const AccountsPage = memo(() => {
   const { data: accounts } = useAccounts();
   const [options, updateOptions] = useImmer<AccountsOptions>({
     search: "",
   });
-  const { data: user } = useUser();
-  const { data: settings } = useSettings();
 
   const filtered = useMemo(() => {
     if (!accounts) {
@@ -39,27 +35,6 @@ export const AccountsPage = memo(() => {
   }, [accounts, options.search]);
 
   const context = useMemo(() => ({ options, updateOptions }), [options, accounts]);
-
-  useEffect(() => {
-    console.log(accounts);
-  }, [accounts]);
-
-  if (!settings || !user) return null;
-  if (!user.password && settings.protected) {
-    return (
-      <Center flex={1}>
-        <Card withBorder shadow="sm" radius="md" w={300}>
-          <Card.Section withBorder inheritPadding py="xs">
-            <Group>
-              <Text fw={500}>Password required</Text>
-            </Group>
-          </Card.Section>
-
-          <PasswordPrompt />
-        </Card>
-      </Center>
-    );
-  }
 
   return (
     <AccountsContext.Provider value={context}>

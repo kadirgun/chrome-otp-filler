@@ -1,6 +1,8 @@
 export type RuntimeMessageType =
   | "get-password"
   | "set-password"
+  | "ask-password"
+  | "add-accounts"
   | "add-qrcode"
   | "error"
   | "scan-qrcode"

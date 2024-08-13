@@ -1,7 +1,7 @@
 import { Modal } from "@mantine/core";
 import { memo, useEffect, useState } from "react";
 import { AccountSelectStep } from "../selectAccountStep";
-import { useActionAtom } from "../../jotai/actionAtom";
+import { useMessageAtom } from "../../jotai/messageAtom";
 import { useStepAtom } from "../../jotai/stepAtom";
 import { useAccountAtom } from "../../jotai/accountAtom";
 import { fillInput, getMatchedAccountsByURL } from "../../utils";
@@ -12,7 +12,7 @@ import type { HistoryItem } from "@/types";
 export const CustomFill = memo(() => {
   const { data: accounts } = useAccounts();
   const { step, setStep } = useStepAtom();
-  const { setAction } = useActionAtom();
+  const { setMessage: setAction } = useMessageAtom();
   const [input, setInput] = useState<HTMLInputElement>();
   const { account, setAccount } = useAccountAtom();
   const { mutate: updateAccount } = useUpdateAccount();
@@ -61,7 +61,7 @@ export const CustomFill = memo(() => {
 
   return (
     <Modal title="Fill OTP Code" centered opened={step === "select-account"} onClose={onClose}>
-      {step === "select-account" && <AccountSelectStep message="Select account to fill the OTP code" next="fill" />}
+      <AccountSelectStep message="Select account to fill the OTP code" next="fill" />
     </Modal>
   );
 });

@@ -6,21 +6,26 @@ import { AppMenu } from "./components/menu";
 import { useLogo } from "@/hooks/useLogo";
 import { useFavicon } from "@/hooks/useFavicon";
 import { LogoutButton } from "./components/logoutButton";
+import { PasswordGuard } from "@/components/passwordGuard";
+import { usePasswordRequired } from "@/hooks/usePasswordRequired";
 
 export const Layout = memo(() => {
   const [opened, { toggle }] = useDisclosure();
   const logo = useLogo();
   const favicon = useFavicon();
+  const passwordRequired = usePasswordRequired();
 
   useEffect(() => {
     const link = document.querySelector("#favicon") as HTMLLinkElement;
     link.href = favicon;
   }, [favicon]);
 
+  if (!passwordRequired) return null;
+
   return (
     <AppShell
       header={{ height: 60 }}
-      navbar={{ width: 300, breakpoint: "sm", collapsed: { mobile: !opened } }}
+      navbar={{ width: 300, breakpoint: "sm", collapsed: { mobile: !opened, desktop: passwordRequired.ask } }}
       padding="md"
     >
       <AppShell.Header>
@@ -39,7 +44,9 @@ export const Layout = memo(() => {
         <AppMenu />
       </AppShell.Navbar>
       <AppShell.Main component={Stack}>
-        <Outlet />
+        <PasswordGuard flex={1}>
+          <Outlet />
+        </PasswordGuard>
       </AppShell.Main>
     </AppShell>
   );

@@ -2,7 +2,7 @@ import type { QRCodeMessageData } from "@/types/runtime";
 import { memo, useEffect } from "react";
 import { imageDataFromURL, scanQRCode } from "@/utils/otp";
 import { useAccountsAtom } from "../../jotai/accountsAtom";
-import { useActionAtom } from "../../jotai/actionAtom";
+import { useMessageAtom } from "../../jotai/messageAtom";
 
 const findImageElement = (src?: string) => {
   if (!src) return;
@@ -22,7 +22,7 @@ const findImageElement = (src?: string) => {
 
 export const AddQRCode = memo(() => {
   const { setAccounts } = useAccountsAtom();
-  const { action } = useActionAtom();
+  const { message: action } = useMessageAtom();
   const scan = async (data: QRCodeMessageData) => {
     if (!data.url) return;
     const element = findImageElement(data.src);

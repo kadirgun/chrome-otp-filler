@@ -4,11 +4,11 @@ import { AccountSelectStep } from "../selectAccountStep";
 import { SetURLStep } from "../setURLStep";
 import { UpdateAccountStep } from "../updateSettingsStep";
 import { useEffect } from "react";
-import { useActionAtom } from "../../jotai/actionAtom";
+import { useMessageAtom } from "../../jotai/messageAtom";
 
 export const AddURL = () => {
   const { step, setStep } = useStepAtom();
-  const { setAction } = useActionAtom();
+  const { setMessage: setAction } = useMessageAtom();
 
   useEffect(() => {
     setStep("select-account");
