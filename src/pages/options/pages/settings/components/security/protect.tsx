@@ -7,6 +7,7 @@ import { useAccounts, useUpdateAccount } from "@/queries/accounts";
 import { usePassword, useUpdateSettings } from "@/queries/settings";
 import { showNotification } from "@mantine/notifications";
 import { encryptAccount } from "@/utils/account";
+import type { HistoryItem } from "@/types";
 
 type ProtectForm = {
   password: string;
@@ -44,22 +45,23 @@ export const Protect = memo(() => {
     const salt = crypto.lib.WordArray.random(128 / 8).toString(crypto.enc.Hex);
     const password = crypto.HmacSHA256(values.password, salt).toString(crypto.enc.Hex);
 
-    updateAccount(
-      accounts
-        .map((account) => encryptAccount(account, password))
-        .map((account) => ({
-          ...account,
-          history: [
-            ...account.history,
-            {
-              timestamp: Date.now(),
-              type: "protect",
-              description: "Account protected with password",
-              url: "",
-            },
-          ],
-        }))
-    );
+    const history: HistoryItem = {
+      timestamp: Date.now(),
+      type: "protect",
+      description: "Account protected with password",
+      url: "",
+    };
+
+    const encryptedAccounts = accounts
+      .map((account) => encryptAccount(account, values.password))
+      .map((account) => ({
+        ...account,
+        history: [...account.history, history],
+      }));
+
+    console.log("encryptedAccounts", encryptedAccounts);
+
+    updateAccount(encryptedAccounts);
 
     updateSettings({
       protected: true,

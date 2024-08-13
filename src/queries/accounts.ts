@@ -20,22 +20,22 @@ const useProtectedAccounts = () => {
 };
 
 export const useAccounts = () => {
-  const { data: unprotected, ...rest } = useProtectedAccounts();
+  const { data: protectedAccounts, ...rest } = useProtectedAccounts();
   const { data: settings } = useSettings();
   const { password } = usePassword();
 
   const accounts = useMemo(() => {
-    if (!unprotected || !settings) return;
-    if (!settings.protected) return unprotected;
+    if (!protectedAccounts || !settings) return;
+    if (!settings.protected) return protectedAccounts;
     if (!password) return;
 
     try {
-      return unprotected.map((account) => decryptAccount(account, password));
+      return protectedAccounts.map((account) => decryptAccount(account, password));
     } catch (error) {
       console.error(error);
-      return unprotected;
+      return protectedAccounts;
     }
-  }, [unprotected, settings, password]);
+  }, [protectedAccounts, settings, password]);
 
   return { data: accounts, ...rest };
 };
@@ -107,6 +107,8 @@ export const useUpdateAccount = (protect: boolean = true) => {
         if (!settings.protected || !protect) return deepMerge(oldAccount, newAccount);
         return deepMerge(oldAccount, encryptAccount(newAccount, password));
       });
+
+      console.log("newAccounts", newAccounts);
 
       await chrome.storage.local.set({ "account-storage": newAccounts });
 

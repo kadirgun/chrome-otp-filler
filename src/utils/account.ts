@@ -33,6 +33,7 @@ export const mergeAccount = (account?: Partial<OTPAccount>): OTPAccount => {
 
 export const encryptAccount = (account: OTPAccount, password: string): OTPAccount => {
   if (account.encrypted) return account;
+  if (!password) throw new Error("Password is required to encrypt account");
   return {
     ...account,
     secret: crypto.AES.encrypt(account.secret, password).toString(),
@@ -42,6 +43,7 @@ export const encryptAccount = (account: OTPAccount, password: string): OTPAccoun
 
 export const decryptAccount = (account: OTPAccount, password: string): OTPAccount => {
   if (!account.encrypted) return account;
+  if (!password) throw new Error("Password is required to encrypt account");
   return {
     ...account,
     secret: crypto.AES.decrypt(account.secret, password).toString(crypto.enc.Utf8),

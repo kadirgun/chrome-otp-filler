@@ -1,5 +1,6 @@
 import { useAccounts, useUpdateAccount } from "@/queries/accounts";
 import { useSettings, useUpdateSettings } from "@/queries/settings";
+import type { HistoryItem } from "@/types";
 import { decryptAccount } from "@/utils/account";
 import { Stack, PasswordInput, Button, Input, Notification } from "@mantine/core";
 import { useForm } from "@mantine/form";
@@ -42,22 +43,21 @@ export const Unprotect = memo(() => {
   const onSubmit = (values: UnprotectForm) => {
     if (!accounts) return;
 
-    updateAccounts(
-      accounts
-        .map((account) => decryptAccount(account, values.password))
-        .map((account) => ({
-          ...account,
-          history: [
-            ...account.history,
-            {
-              timestamp: Date.now(),
-              type: "unprotect",
-              description: "Account unprotected",
-              url: "",
-            },
-          ],
-        }))
-    );
+    const history: HistoryItem = {
+      timestamp: Date.now(),
+      type: "unprotect",
+      description: "Account unprotected",
+      url: "",
+    };
+
+    const decryptedAccounts = accounts
+      .map((account) => decryptAccount(account, values.password))
+      .map((account) => ({
+        ...account,
+        history: [...account.history, history],
+      }));
+
+    updateAccounts(decryptedAccounts);
 
     updateSettings({
       protected: false,
