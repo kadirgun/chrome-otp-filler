@@ -1,0 +1,60 @@
+{
+  "manifest_version": 3,
+  "name": "OTP Filler",
+  "version": "0.2.2",
+  "description": "Fill OTP automatically",
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "permissions": [
+    "storage",
+    "scripting",
+    "activeTab",
+    "contextMenus"
+  ],
+  "options_page": "options.html",
+  "background": {
+    "service_worker": "src/pages/background/main.ts",
+    "type": "module"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": "icon-34.png"
+  },
+  "icons": {
+    "128": "icon-128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "http://*/*",
+        "https://*/*",
+        "<all_urls>"
+      ],
+      "js": [
+        "src/pages/content/main.tsx"
+      ],
+      "all_frames": false,
+      "run_at": "document_idle",
+      "world": "ISOLATED",
+      "match_origin_as_fallback": true
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "*.js",
+        "*.css",
+        "*.svg",
+        "icon-128.png",
+        "icon-34.png",
+        "icon-dark-128.png",
+        "icon-dark-34.png"
+      ],
+      "matches": [
+        "*://*/*"
+      ]
+    }
+  ],
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAin9VhjBA2zcjFh5tKntjukjaFjA3GEv75eAl0bygChScv/lVjokGtYmTqr2GsXbUhaQ7jGtQwgJU0z1eEePKyVFb7bqQPC1o28aDsg5bfac+m+kz+Yt2RMjIKHEav1P2gNk9xUfC76nx243uYdNgorP8iyZnLdiQ8EPKlI9qnOpnavmUYTnIsZaRlReaEQg5aDaa7F14ni9f/Ch4ZZBO6eSKtulX7LbKyPPW7yOQNG2DV/A+tk3j5aABNWNnECYYVJiadjxuO//qXR/1vxK/pCoNQlBBC9u0HceSGP+dYTs+sMBHP1/hDBcfTyMGdj4xKVnE7karJrJzXBs+e/RttwIDAQAB"
+}
