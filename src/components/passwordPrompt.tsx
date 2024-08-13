@@ -3,7 +3,7 @@ import { Button, Card, Group, PasswordInput, Stack, Text } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { memo } from "react";
 import crypto from "crypto-js";
-import { usePassword, useSettings } from "@/queries/settings";
+import { useSettings, useUpdateUser } from "@/queries/settings";
 
 export type PassowrdPromptProps = {
   width?: number;
@@ -11,7 +11,7 @@ export type PassowrdPromptProps = {
 
 export const PasswordPrompt = memo(({ width }: PassowrdPromptProps) => {
   const { data: settings } = useSettings();
-  const { setPassword } = usePassword();
+  const { mutate: updateUser } = useUpdateUser();
 
   const form = useForm<UnprotectForm>({
     initialValues: {
@@ -35,7 +35,9 @@ export const PasswordPrompt = memo(({ width }: PassowrdPromptProps) => {
   });
 
   const onSubmit = (values: UnprotectForm) => {
-    setPassword(values.password);
+    updateUser({
+      password: values.password,
+    });
   };
 
   return (

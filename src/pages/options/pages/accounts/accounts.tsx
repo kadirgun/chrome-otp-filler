@@ -10,7 +10,7 @@ import { AccountsMenu } from "./components/accountsMenu";
 import { DeleteAccountsModal } from "./components/deleteAccountsModal";
 import { ExportAccountsModal } from "./components/exportAccountsModal";
 import { useAccounts } from "@/queries/accounts";
-import { usePassword, useSettings } from "@/queries/settings";
+import { useSettings, useUser } from "@/queries/settings";
 import { PasswordPrompt } from "@/components/passwordPrompt";
 
 export const AccountsPage = memo(() => {
@@ -18,7 +18,7 @@ export const AccountsPage = memo(() => {
   const [options, updateOptions] = useImmer<AccountsOptions>({
     search: "",
   });
-  const { password } = usePassword();
+  const { data: user } = useUser();
   const { data: settings } = useSettings();
 
   const filtered = useMemo(() => {
@@ -44,8 +44,8 @@ export const AccountsPage = memo(() => {
     console.log(accounts);
   }, [accounts]);
 
-  if (!settings) return null;
-  if (!password && settings.protected) {
+  if (!settings || !user) return null;
+  if (!user.password && settings.protected) {
     return (
       <Center flex={1}>
         <PasswordPrompt width={300} />

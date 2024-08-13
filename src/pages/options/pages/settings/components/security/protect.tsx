@@ -4,7 +4,7 @@ import { IconShield } from "@tabler/icons-react";
 import { memo } from "react";
 import crypto from "crypto-js";
 import { useAccounts, useUpdateAccount } from "@/queries/accounts";
-import { usePassword, useUpdateSettings } from "@/queries/settings";
+import { useUpdateSettings, useUpdateUser } from "@/queries/settings";
 import { showNotification } from "@mantine/notifications";
 import { encryptAccount } from "@/utils/account";
 import type { HistoryItem } from "@/types";
@@ -18,7 +18,7 @@ export const Protect = memo(() => {
   const { mutate: updateSettings } = useUpdateSettings();
   const { data: accounts } = useAccounts();
   const { mutate: updateAccount } = useUpdateAccount(false);
-  const { setPassword } = usePassword();
+  const { mutate: updateUser } = useUpdateUser();
 
   const form = useForm<ProtectForm>({
     initialValues: {
@@ -69,7 +69,9 @@ export const Protect = memo(() => {
       salt,
     });
 
-    setPassword(values.password);
+    updateUser({
+      password: values.password,
+    });
 
     showNotification({
       title: "Protection enabled",

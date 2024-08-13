@@ -44,5 +44,5 @@ export type UserSettings = {
 };
 
 export type User = {
-  password?: string;
+  password: string;
 };

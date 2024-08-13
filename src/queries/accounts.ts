@@ -1,15 +1,19 @@
 import type { OTPAccount } from "@/types";
 import { decryptAccount, encryptAccount, mergeAccount } from "@/utils/account";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { usePassword, useSettings } from "./settings";
+import { useSettings, useUser } from "./settings";
 import { useMemo } from "react";
 import { deepMerge } from "@mantine/core";
 
 const getAccounts = async (): Promise<OTPAccount[]> => {
-  const data = await chrome.storage.local.get("account-storage");
-  const accounts = (data["account-storage"] || []) as OTPAccount[];
+  const data = await chrome.storage.local.get("accounts");
+  const accounts = (data["accounts"] || []) as OTPAccount[];
 
   return accounts.map((account) => mergeAccount(account));
+};
+
+const setAccounts = async (accounts: OTPAccount[]) => {
+  return chrome.storage.local.set({ accounts });
 };
 
 const useProtectedAccounts = () => {
@@ -22,20 +26,20 @@ const useProtectedAccounts = () => {
 export const useAccounts = () => {
   const { data: protectedAccounts, ...rest } = useProtectedAccounts();
   const { data: settings } = useSettings();
-  const { password } = usePassword();
+  const { data: user } = useUser();
 
   const accounts = useMemo(() => {
     if (!protectedAccounts || !settings) return;
     if (!settings.protected) return protectedAccounts;
-    if (!password) return;
+    if (!user) return;
 
     try {
-      return protectedAccounts.map((account) => decryptAccount(account, password));
+      return protectedAccounts.map((account) => decryptAccount(account, user.password));
     } catch (error) {
       console.error(error);
       return protectedAccounts;
     }
-  }, [protectedAccounts, settings, password]);
+  }, [protectedAccounts, settings, user]);
 
   return { data: accounts, ...rest };
 };
@@ -43,12 +47,12 @@ export const useAccounts = () => {
 export const useAddAccount = () => {
   const client = useQueryClient();
   const { data: settings } = useSettings();
-  const { password } = usePassword();
+  const { data: user } = useUser();
 
   return useMutation({
     mutationKey: ["addAccount"],
     mutationFn: async (request: OTPAccount | OTPAccount[]) => {
-      if (!settings || !password) return;
+      if (!settings || !user) return;
       if (!Array.isArray(request)) request = [request];
 
       const oldAccounts = await getAccounts();
@@ -56,11 +60,11 @@ export const useAddAccount = () => {
         ...oldAccounts,
         ...request.map((account) => {
           if (!settings.protected) return account;
-          return encryptAccount(account, password);
+          return encryptAccount(account, user.password);
         }),
       ];
 
-      await chrome.storage.local.set({ "account-storage": newAccounts });
+      await setAccounts(newAccounts);
 
       return newAccounts;
     },
@@ -79,7 +83,7 @@ export const useRemoveAccount = () => {
 
       const oldAccounts = await getAccounts();
       const newAccounts = oldAccounts.filter((account) => !id.includes(account.id));
-      await chrome.storage.local.set({ "account-storage": newAccounts });
+      await setAccounts(newAccounts);
 
       return newAccounts;
     },
@@ -92,12 +96,12 @@ export const useRemoveAccount = () => {
 export const useUpdateAccount = (protect: boolean = true) => {
   const client = useQueryClient();
   const { data: settings } = useSettings();
-  const { password } = usePassword();
+  const { data: user } = useUser();
 
   return useMutation({
     mutationKey: ["updateAccount"],
     mutationFn: async (request: OTPAccount | OTPAccount[]) => {
-      if (!settings || password === undefined) return;
+      if (!settings || !user) return;
       if (!Array.isArray(request)) request = [request];
 
       const oldAccounts = await getAccounts();
@@ -105,12 +109,12 @@ export const useUpdateAccount = (protect: boolean = true) => {
         const newAccount = request.find((account) => account.id === oldAccount.id);
         if (!newAccount) return oldAccount;
         if (!settings.protected || !protect) return deepMerge(oldAccount, newAccount);
-        return deepMerge(oldAccount, encryptAccount(newAccount, password));
+        return deepMerge(oldAccount, encryptAccount(newAccount, user.password));
       });
 
       console.log("newAccounts", newAccounts);
 
-      await chrome.storage.local.set({ "account-storage": newAccounts });
+      await setAccounts(newAccounts);
 
       return newAccounts;
     },

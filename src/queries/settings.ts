@@ -17,7 +17,13 @@ export const defaultSettings: UserSettings = {
 
 const getSettings = async (): Promise<UserSettings> => {
   const data = await chrome.storage.local.get("settings");
-  return deepMerge(defaultSettings, data["settings"] || {});
+  const settings = deepMerge(defaultSettings, data["settings"] || {});
+
+  return settings;
+};
+
+const setSettings = async (settings: UserSettings) => {
+  return chrome.storage.local.set({ settings });
 };
 
 export const useSettings = () => {
@@ -34,7 +40,7 @@ export const useUpdateSettings = () => {
     mutationFn: async (values: Partial<UserSettings>) => {
       const oldSettings = await getSettings();
       const newSettings = deepMerge(oldSettings, values);
-      await chrome.storage.local.set({ settings: newSettings });
+      await setSettings(newSettings);
 
       return newSettings;
     },
@@ -49,14 +55,18 @@ const getUser = async () => {
   return (data["user"] || {}) as User;
 };
 
-const useUser = () => {
+const setUser = async (user: User) => {
+  return chrome.storage.local.set({ user });
+};
+
+export const useUser = () => {
   return useQuery({
     queryKey: ["user"],
     queryFn: getUser,
   });
 };
 
-const useUpdateUser = () => {
+export const useUpdateUser = () => {
   const client = useQueryClient();
 
   return useMutation({
@@ -64,7 +74,7 @@ const useUpdateUser = () => {
     mutationFn: async (value: Partial<User>) => {
       const oldUser = await getUser();
       const newUser = deepMerge(oldUser, value);
-      await chrome.storage.local.set({ user: newUser });
+      await setUser(newUser);
 
       return newUser;
     },
@@ -73,15 +83,4 @@ const useUpdateUser = () => {
       client.setQueryData<User>(["user"], data);
     },
   });
-};
-
-export const usePassword = () => {
-  const { data: user } = useUser();
-  const { mutate: updateUser } = useUpdateUser();
-
-  const setPassword = (password: string) => {
-    updateUser({ password });
-  };
-
-  return { password: user?.password, setPassword };
 };
