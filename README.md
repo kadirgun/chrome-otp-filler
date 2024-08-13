@@ -1,6 +1,6 @@
 # Chrome OTP Filler Extension
 
-![Chrome OTP Filler](/public/logo-dark.png)
+![Chrome OTP Filler](/public/logo.png)
 
 A Chrome extension that auto-fills OTP codes.
 
