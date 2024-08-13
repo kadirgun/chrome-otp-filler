@@ -16,7 +16,7 @@ type ProtectForm = {
 export const Protect = memo(() => {
   const { mutate: updateSettings } = useUpdateSettings();
   const { data: accounts } = useAccounts();
-  const { mutate: updateAccount } = useUpdateAccount();
+  const { mutate: updateAccount } = useUpdateAccount(false);
   const { setPassword } = usePassword();
 
   const form = useForm<ProtectForm>({

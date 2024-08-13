@@ -104,7 +104,7 @@ export const useUpdateAccount = (protect: boolean = true) => {
       const newAccounts = oldAccounts.map((oldAccount) => {
         const newAccount = request.find((account) => account.id === oldAccount.id);
         if (!newAccount) return oldAccount;
-        if (!settings.protected || !protect) return newAccount;
+        if (!settings.protected || !protect) return deepMerge(oldAccount, newAccount);
         return deepMerge(oldAccount, encryptAccount(newAccount, password));
       });
 
