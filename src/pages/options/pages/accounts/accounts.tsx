@@ -1,5 +1,5 @@
 import { Group, SimpleGrid, Stack } from "@mantine/core";
-import { memo, useMemo } from "react";
+import { memo, useEffect, useMemo } from "react";
 import { AccountProvider } from "./components/account/provider";
 import { useImmer } from "use-immer";
 import { AccountsContext, AccountsOptions } from "@/pages/options/contexts/accounts";
@@ -33,6 +33,10 @@ export const AccountsPage = memo(() => {
       return matchLabel || matchIssuer;
     });
   }, [accounts, options.search]);
+
+  useEffect(() => {
+    console.log("accounts", accounts);
+  }, [accounts]);
 
   const context = useMemo(() => ({ options, updateOptions }), [options, accounts]);
 

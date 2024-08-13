@@ -22,7 +22,12 @@ const findImageElement = (src?: string) => {
 
 export const AddQRCode = memo(() => {
   const { setAccounts } = useAccountsAtom();
-  const { message: action } = useMessageAtom();
+  const { message, setMessage } = useMessageAtom();
+
+  useEffect(() => {
+    console.log("AddQRCode mounted");
+  }, []);
+
   const scan = async (data: QRCodeMessageData) => {
     if (!data.url) return;
     const element = findImageElement(data.src);
@@ -32,10 +37,12 @@ export const AddQRCode = memo(() => {
     const accounts = await scanQRCode(image);
 
     setAccounts(accounts);
+    setMessage({ type: "add-accounts" });
   };
 
   useEffect(() => {
-    const data = action?.data as QRCodeMessageData;
+    if (!message) return;
+    const data = message.data as QRCodeMessageData;
     scan(data);
   }, []);
 

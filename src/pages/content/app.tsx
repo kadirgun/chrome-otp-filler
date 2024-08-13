@@ -32,6 +32,7 @@ const getScale = () => {
 
 export const App = () => {
   const color = isDarkTheme() ? "dark" : "light";
+
   return (
     <QueryClientProvider client={queryClient}>
       <MantineProvider

@@ -2,13 +2,13 @@ import type { OTPAccount } from "@/types";
 import { generate } from "@/utils/otp";
 import { useEffect, useState } from "react";
 
-export const useGenerateOTP = (account?: OTPAccount) => {
+export const useGenerateOTP = (account?: OTPAccount, skip?: boolean) => {
   const [token, setToken] = useState<string>();
   const [progress, setProgress] = useState<number>(100);
   const [error, setError] = useState<string>();
 
   const generateOTP = () => {
-    if (!account) return;
+    if (!account || skip) return;
     try {
       const token = generate(account);
       setToken(token);

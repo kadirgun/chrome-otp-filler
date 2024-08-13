@@ -11,36 +11,32 @@ import { memo, useEffect } from "react";
 import { useMessageAtom } from "./jotai/messageAtom";
 import { CustomFill } from "./components/customFill/customFill";
 import { useHotkeys } from "@mantine/hooks";
-import { usePasswordRequired } from "@/hooks/usePasswordRequired";
 import { AskPasswordModal } from "./components/askPasswordModal";
 
 export const Controller = memo(() => {
   const { data: settings } = useSettings();
-  const { message: action, setMessage: setAction } = useMessageAtom();
-  const password = usePasswordRequired();
+  const { setMessage, message } = useMessageAtom();
 
-  const updateAction = (message: RuntimeMessage) => {
-    console.log(message, password);
-    if (password?.ask) {
-      setAction({ type: "ask-password", data: message });
-    } else {
-      setAction(message);
-    }
+  useEffect(() => {
+    console.log("Controller mounted");
+  }, []);
+
+  const updateMessage = (event: RuntimeMessage) => {
+    setMessage(event);
   };
 
   useEffect(() => {
-    if (action) return;
-    chrome.runtime.sendMessage("get-last-message", (message: RuntimeMessage) => {
-      console.log("last message", message);
-      if (!message) return;
-      updateAction(message);
+    if (message) return;
+    chrome.runtime.sendMessage("get-last-message", (event: RuntimeMessage) => {
+      console.log("last message", event);
+      if (!event) return setMessage({ type: "auto-fill" });
+      updateMessage(event);
     });
   }, []);
 
   useEffect(() => {
-    const listener = (message: RuntimeMessage) => {
-      console.log("message", message);
-      updateAction(message);
+    const listener = (event: RuntimeMessage) => {
+      updateMessage(event);
     };
 
     chrome.runtime.onMessage.addListener(listener);
@@ -55,7 +51,7 @@ export const Controller = memo(() => {
       [
         "ctrl+q",
         () => {
-          updateAction({ type: "fill-input" });
+          updateMessage({ type: "fill-input" });
         },
         {
           preventDefault: false,
@@ -66,18 +62,18 @@ export const Controller = memo(() => {
     true
   );
 
-  if (!settings) return null;
+  if (!settings || !message) return null;
 
   return (
     <Box>
-      {settings.autofill && <AutoFill />}
-      {action?.type === "add-accounts" && <AddAccountsModal />}
-      {action?.type === "ask-password" && <AskPasswordModal />}
-      {action?.type === "add-qrcode" && <AddQRCode />}
-      {action?.type === "scan-qrcode" && <ScanQRCode />}
-      {action?.type === "add-selector" && <AddSelector />}
-      {action?.type === "add-url" && <AddURL />}
-      {action?.type === "fill-input" && <CustomFill />}
+      {message.type === "auto-fill" && <AutoFill />}
+      {message.type === "add-accounts" && <AddAccountsModal />}
+      {message.type === "ask-password" && <AskPasswordModal />}
+      {message.type === "add-qrcode" && <AddQRCode />}
+      {message.type === "scan-qrcode" && <ScanQRCode />}
+      {message.type === "add-selector" && <AddSelector />}
+      {message.type === "add-url" && <AddURL />}
+      {message.type === "fill-input" && <CustomFill />}
     </Box>
   );
 });

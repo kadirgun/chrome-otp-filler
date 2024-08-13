@@ -7,25 +7,26 @@ import { useLogo } from "@/hooks/useLogo";
 import { useFavicon } from "@/hooks/useFavicon";
 import { LogoutButton } from "./components/logoutButton";
 import { PasswordGuard } from "@/components/passwordGuard";
-import { usePasswordRequired } from "@/hooks/usePasswordRequired";
+import { usePasswordGuard } from "@/hooks/usePasswordGuard";
+import { isNull } from "lodash";
 
 export const Layout = memo(() => {
   const [opened, { toggle }] = useDisclosure();
   const logo = useLogo();
   const favicon = useFavicon();
-  const passwordRequired = usePasswordRequired();
+  const guard = usePasswordGuard();
 
   useEffect(() => {
     const link = document.querySelector("#favicon") as HTMLLinkElement;
     link.href = favicon;
   }, [favicon]);
 
-  if (!passwordRequired) return null;
+  if (isNull(guard)) return null;
 
   return (
     <AppShell
       header={{ height: 60 }}
-      navbar={{ width: 300, breakpoint: "sm", collapsed: { mobile: !opened, desktop: passwordRequired.ask } }}
+      navbar={{ width: 300, breakpoint: "sm", collapsed: { mobile: !opened, desktop: guard } }}
       padding="md"
     >
       <AppShell.Header>

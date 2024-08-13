@@ -43,7 +43,6 @@ export const AccountSettingsForm = memo(
             try {
               document.querySelector(pattern);
             } catch {
-              console.log("Invalid CSS selector");
               return "Invalid CSS selector";
             }
           },

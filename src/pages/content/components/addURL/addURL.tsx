@@ -8,7 +8,11 @@ import { useMessageAtom } from "../../jotai/messageAtom";
 
 export const AddURL = () => {
   const { step, setStep } = useStepAtom();
-  const { setMessage: setAction } = useMessageAtom();
+  const { setMessage } = useMessageAtom();
+
+  useEffect(() => {
+    console.log("AddURL mounted");
+  }, []);
 
   useEffect(() => {
     setStep("select-account");
@@ -16,7 +20,7 @@ export const AddURL = () => {
 
   const onClose = () => {
     setStep("idle");
-    setAction(undefined);
+    setMessage(undefined);
   };
 
   useEffect(() => {

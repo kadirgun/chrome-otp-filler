@@ -13,13 +13,13 @@ export type UpdateAccountStepProps = {
 };
 
 export const UpdateAccountStep = memo(({ next }: UpdateAccountStepProps) => {
-  const { mutate: updateAccount } = useUpdateAccount();
+  const { mutateAsync: updateAccount, isPending } = useUpdateAccount();
   const { account, setAccount } = useAccountAtom();
   const { setStep } = useStepAtom();
   const { setAttributes } = useAttributesAtom();
 
   const onSubmit = (values: OTPAccountSettings) => {
-    if (!account) return;
+    if (!account || isPending) return;
 
     const history: HistoryItem = {
       timestamp: Date.now(),
@@ -32,17 +32,17 @@ export const UpdateAccountStep = memo(({ next }: UpdateAccountStepProps) => {
       ...account,
       settings: values,
       history: [...account.history, history],
-    });
+    }).then(() => {
+      showNotification({
+        title: "Settings saved",
+        message: "Account settings were successfully saved",
+        color: "blue",
+      });
 
-    showNotification({
-      title: "Settings saved",
-      message: "Account settings were successfully saved",
-      color: "blue",
+      setStep(next);
+      setAccount(undefined);
+      setAttributes([]);
     });
-
-    setStep(next);
-    setAccount(undefined);
-    setAttributes([]);
   };
 
   if (!account) return null;

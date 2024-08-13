@@ -11,7 +11,11 @@ import { useMessageAtom } from "../../jotai/messageAtom";
 export const AddSelector = memo(() => {
   const { setAttributes } = useAttributesAtom();
   const { step, setStep } = useStepAtom();
-  const { setMessage: setAction } = useMessageAtom();
+  const { setMessage } = useMessageAtom();
+
+  useEffect(() => {
+    console.log("AddSelector mounted");
+  }, []);
 
   useEffect(() => {
     if (step !== "idle") return;
@@ -29,7 +33,7 @@ export const AddSelector = memo(() => {
 
   const onClose = () => {
     setStep("idle");
-    setAction(undefined);
+    setMessage({ type: "auto-fill" });
   };
 
   useEffect(() => {

@@ -6,7 +6,7 @@ import { memo } from "react";
 export const LogoutButton = memo(() => {
   const { data: user } = useUser();
   const { data: settings } = useSettings();
-  const { mutate: updateUser } = useUpdateUser();
+  const { mutateAsync: updateUser, isPending } = useUpdateUser();
 
   const handleLogout = () => {
     updateUser({
@@ -18,7 +18,7 @@ export const LogoutButton = memo(() => {
   if (!settings.protected || !user.password) return null;
 
   return (
-    <ActionIcon size={36} color="red" onClick={handleLogout}>
+    <ActionIcon size={36} color="red" onClick={handleLogout} loading={isPending}>
       <IconLogout size={20} />
     </ActionIcon>
   );

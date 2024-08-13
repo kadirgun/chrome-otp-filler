@@ -9,7 +9,8 @@ export type RuntimeMessageType =
   | "get-data-url"
   | "add-selector"
   | "add-url"
-  | "fill-input";
+  | "fill-input"
+  | "auto-fill";
 
 type DefaultData = undefined;
 
@@ -30,3 +31,10 @@ export type QRCodeMessageData = {
 };
 
 export type QRCodeMessage = RuntimeMessage<QRCodeMessageData>;
+
+export type AskPasswordMessageData = {
+  prompt: string;
+  next?: RuntimeMessage;
+};
+
+export type AskPasswordMessage = RuntimeMessage<AskPasswordMessageData>;

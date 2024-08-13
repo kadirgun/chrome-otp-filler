@@ -11,17 +11,21 @@ const overflow = document.body.style.overflow;
 
 export const ScanQRCode = () => {
   const { setAccounts } = useAccountsAtom();
-  const { message: action, setMessage: setAction } = useMessageAtom();
+  const { message, setMessage } = useMessageAtom();
   const [crop, setCrop] = useState<Crop>();
 
   const onClose = () => {
-    console.log(overflow);
     document.body.style.overflow = overflow || "";
-    setAction(undefined);
+    setMessage(undefined);
   };
 
+  useEffect(() => {
+    console.log("ScanQRCode mounted");
+  }, []);
+
   const onComplete = async (crop: PixelCrop) => {
-    console.log(crop);
+    if (!message) return;
+
     if (crop.width < 50 || crop.height < 50) return;
 
     const canvas = document.createElement("canvas");
@@ -41,6 +45,8 @@ export const ScanQRCode = () => {
         const accounts = await scanQRCode(imageData);
 
         setAccounts(accounts);
+        setMessage({ type: "add-accounts" });
+        return;
       } catch (error: any) {
         console.error(error);
         showNotification({
@@ -52,7 +58,8 @@ export const ScanQRCode = () => {
 
       onClose();
     };
-    image.src = action.data;
+
+    image.src = message.data;
   };
 
   useEventListener("keydown", (event) => {
@@ -65,7 +72,7 @@ export const ScanQRCode = () => {
     document.body.style.overflow = "hidden";
   }, []);
 
-  if (action?.type !== "scan-qrcode") return null;
+  if (!message) return null;
 
   return (
     <ReactCrop

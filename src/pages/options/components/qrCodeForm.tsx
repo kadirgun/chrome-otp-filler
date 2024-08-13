@@ -111,7 +111,6 @@ export const QRCodeForm = memo(({ action, onSubmit }: QRCodeFormProps) => {
     (event: DragEvent) => {
       if (event.x != 0) return;
       event.stopPropagation();
-      console.log("dragleave", event);
       setDragging(false);
     },
     document

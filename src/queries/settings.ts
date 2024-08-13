@@ -79,7 +79,6 @@ export const useUpdateUser = () => {
       return newUser;
     },
     onSuccess(data) {
-      console.log(data);
       client.setQueryData<User>(["user"], data);
     },
   });

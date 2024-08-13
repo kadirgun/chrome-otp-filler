@@ -5,15 +5,25 @@ import { fillInput, getMatchedAccountsBySelector, getMatchedAccountsByURL } from
 import { useInterval, useLocationSelector } from "@reactuses/core";
 import { useSettings } from "@/queries/settings";
 import { OTPAccount, type HistoryItem } from "@/types";
+import { usePasswordGuard } from "@/hooks/usePasswordGuard";
+import { useMessageAtom } from "../../jotai/messageAtom";
+import type { AskPasswordMessage } from "@/types/runtime";
+import { isNull } from "lodash";
 
 export const AutoFill = memo(() => {
   const { data: accounts } = useAccounts();
   const [input, setInput] = useState<HTMLInputElement>();
   const [account, setAccount] = useState<OTPAccount>();
-  const { token } = useGenerateOTP(account);
   const { data: settings } = useSettings();
   const location = useLocationSelector((location) => location.href);
   const { mutate: updateAccount } = useUpdateAccount();
+  const guard = usePasswordGuard();
+  const { token } = useGenerateOTP(account, !!guard);
+  const { setMessage } = useMessageAtom();
+
+  useEffect(() => {
+    console.log("AutoFill mounted");
+  }, []);
 
   const autoFillEnabledAccounts = useMemo(() => {
     if (!accounts || !location) return;
@@ -58,7 +68,24 @@ export const AutoFill = memo(() => {
   }, [isActive]);
 
   useEffect(() => {
+    if (isNull(guard)) return;
     if (!input || !account) return;
+
+    pause();
+
+    if (guard) {
+      const message: AskPasswordMessage = {
+        type: "ask-password",
+        data: {
+          prompt: "Enter your password to autofill OTP code",
+          next: {
+            type: "auto-fill",
+          },
+        },
+      };
+
+      return setMessage(message);
+    }
 
     const history: HistoryItem = {
       timestamp: Date.now(),
@@ -71,8 +98,7 @@ export const AutoFill = memo(() => {
       ...account,
       history: [...account.history, history],
     });
-    pause();
-  }, [account, input]);
+  }, [input]);
 
   useEffect(() => {
     if (!input || !token) return;

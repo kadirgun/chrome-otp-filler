@@ -1,19 +1,15 @@
 import { useSettings, useUser } from "@/queries/settings";
 import { useMemo } from "react";
 
-export const usePasswordRequired = () => {
+export const usePasswordGuard = () => {
   const { data: user } = useUser();
   const { data: settings } = useSettings();
 
-  const required = useMemo(() => {
-    if (!user || !settings) return;
+  const guard = useMemo(() => {
+    if (!user || !settings) return null;
 
     return settings.protected && !user.password;
   }, [user, settings]);
 
-  if (!user || !settings) return;
-
-  return {
-    ask: required,
-  };
+  return guard;
 };

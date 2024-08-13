@@ -11,7 +11,7 @@ export type PasswordPromptProps = {
 
 export const PasswordPrompt = memo(({ onPass }: PasswordPromptProps) => {
   const { data: settings } = useSettings();
-  const { mutate: updateUser } = useUpdateUser();
+  const { mutateAsync: updateUser, isPending } = useUpdateUser();
 
   const form = useForm<UnprotectForm>({
     initialValues: {
@@ -37,16 +37,17 @@ export const PasswordPrompt = memo(({ onPass }: PasswordPromptProps) => {
   const onSubmit = (values: UnprotectForm) => {
     updateUser({
       password: values.password,
+    }).then(() => {
+      onPass?.();
+      form.reset();
     });
-
-    onPass?.();
   };
 
   return (
     <form onSubmit={form.onSubmit(onSubmit)}>
       <Stack pt="sm">
         <PasswordInput placeholder="Enter password" {...form.getInputProps("password")} />
-        <Button type="submit" variant="light" color="blue">
+        <Button type="submit" variant="light" color="blue" loading={isPending}>
           Submit
         </Button>
       </Stack>

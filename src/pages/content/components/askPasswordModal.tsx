@@ -1,21 +1,26 @@
 import { memo } from "react";
 import { PasswordPrompt } from "@/components/passwordPrompt";
 import { useMessageAtom } from "../jotai/messageAtom";
-import { Modal } from "@mantine/core";
+import { Modal, Notification } from "@mantine/core";
+import { AskPasswordMessage } from "@/types/runtime";
 
 export const AskPasswordModal = memo(() => {
-  const { message: action, setMessage: setAction } = useMessageAtom();
+  const { message, setMessage } = useMessageAtom<AskPasswordMessage>();
 
   const onPass = () => {
-    setAction(action?.data);
+    if (!message) return;
+    setMessage(message.data.next);
   };
 
   const onClose = () => {
-    setAction(undefined);
+    setMessage(undefined);
   };
+
+  if (!message) return null;
 
   return (
     <Modal centered title="Password Required" opened={true} onClose={onClose}>
+      {message.data.prompt && <Notification withCloseButton={false}>{message.data.prompt}</Notification>}
       <PasswordPrompt onPass={onPass} />
     </Modal>
   );

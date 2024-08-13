@@ -8,19 +8,45 @@ import { fillInput, getMatchedAccountsByURL } from "../../utils";
 import { useAccounts, useUpdateAccount } from "@/queries/accounts";
 import { generate } from "@/utils/otp";
 import type { HistoryItem } from "@/types";
+import { usePasswordGuard } from "@/hooks/usePasswordGuard";
+import type { AskPasswordMessage } from "@/types/runtime";
+import { get, isNull } from "lodash";
 
 export const CustomFill = memo(() => {
   const { data: accounts } = useAccounts();
   const { step, setStep } = useStepAtom();
-  const { setMessage: setAction } = useMessageAtom();
+  const { message, setMessage } = useMessageAtom();
   const [input, setInput] = useState<HTMLInputElement>();
   const { account, setAccount } = useAccountAtom();
   const { mutate: updateAccount } = useUpdateAccount();
+  const guard = usePasswordGuard();
 
   useEffect(() => {
-    if (step !== "idle" || !accounts) return;
+    console.log("CustomFill mounted");
+  }, []);
 
-    const element = document.activeElement;
+  useEffect(() => {
+    if (step !== "idle" || !accounts || isNull(guard)) return;
+
+    if (guard) {
+      const message: AskPasswordMessage = {
+        type: "ask-password",
+        data: {
+          prompt: "Enter your password to fill the OTP code",
+          next: {
+            type: "fill-input",
+            data: {
+              input: document.activeElement,
+            },
+          },
+        },
+      };
+
+      return setMessage(message);
+    }
+
+    const messageInput = get(message, "data.input");
+    const element = messageInput || document.activeElement;
     setInput(element as HTMLInputElement);
 
     const matchedAccounts = getMatchedAccountsByURL(accounts, window.location.href);
@@ -50,13 +76,14 @@ export const CustomFill = memo(() => {
       history: [...account.history, history],
     });
 
-    setStep("idle");
-    setAction(undefined);
+    onClose();
   }, [account, input, step]);
 
   const onClose = () => {
     setStep("idle");
-    setAction(undefined);
+    setMessage({
+      type: "auto-fill",
+    });
   };
 
   return (
