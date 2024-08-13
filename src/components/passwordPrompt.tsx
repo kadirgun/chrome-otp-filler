@@ -1,15 +1,11 @@
 import type { UnprotectForm } from "@/pages/options/pages/settings/components/security/unProtect";
-import { Button, Card, Group, PasswordInput, Stack, Text } from "@mantine/core";
+import { Button, PasswordInput, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { memo } from "react";
 import crypto from "crypto-js";
 import { useSettings, useUpdateUser } from "@/queries/settings";
 
-export type PassowrdPromptProps = {
-  width?: number;
-};
-
-export const PasswordPrompt = memo(({ width }: PassowrdPromptProps) => {
+export const PasswordPrompt = memo(() => {
   const { data: settings } = useSettings();
   const { mutate: updateUser } = useUpdateUser();
 
@@ -41,21 +37,13 @@ export const PasswordPrompt = memo(({ width }: PassowrdPromptProps) => {
   };
 
   return (
-    <Card withBorder shadow="sm" radius="md" w={width}>
-      <Card.Section withBorder inheritPadding py="xs">
-        <Group>
-          <Text fw={500}>Password is required</Text>
-        </Group>
-      </Card.Section>
-
-      <form onSubmit={form.onSubmit(onSubmit)}>
-        <Stack pt="sm">
-          <PasswordInput placeholder="Enter password" {...form.getInputProps("password")} />
-          <Button type="submit" variant="light" color="blue">
-            Submit
-          </Button>
-        </Stack>
-      </form>
-    </Card>
+    <form onSubmit={form.onSubmit(onSubmit)}>
+      <Stack pt="sm">
+        <PasswordInput placeholder="Enter password" {...form.getInputProps("password")} />
+        <Button type="submit" variant="light" color="blue">
+          Submit
+        </Button>
+      </Stack>
+    </form>
   );
 });

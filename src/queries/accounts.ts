@@ -29,9 +29,9 @@ export const useAccounts = () => {
   const { data: user } = useUser();
 
   const accounts = useMemo(() => {
-    if (!protectedAccounts || !settings) return;
+    if (!protectedAccounts || !settings || !user) return;
     if (!settings.protected) return protectedAccounts;
-    if (!user) return;
+    if (!user.password && settings.protected) return [];
 
     try {
       return protectedAccounts.map((account) => decryptAccount(account, user.password));

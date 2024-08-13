@@ -5,6 +5,7 @@ import { Outlet } from "react-router-dom";
 import { AppMenu } from "./components/menu";
 import { useLogo } from "@/hooks/useLogo";
 import { useFavicon } from "@/hooks/useFavicon";
+import { LogoutButton } from "./components/logoutButton";
 
 export const Layout = memo(() => {
   const [opened, { toggle }] = useDisclosure();
@@ -23,9 +24,15 @@ export const Layout = memo(() => {
       padding="md"
     >
       <AppShell.Header>
-        <Group h="100%" px="md">
-          <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
-          <Image src={logo} alt="Logo" height={40} />
+        <Group justify="space-between" h="100%" px="md">
+          <Group>
+            <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
+            <Image src={logo} alt="Logo" height={40} />
+          </Group>
+
+          <Group>
+            <LogoutButton />
+          </Group>
         </Group>
       </AppShell.Header>
       <AppShell.Navbar p="md">

@@ -1,4 +1,4 @@
-import { Center, Group, SimpleGrid, Stack } from "@mantine/core";
+import { Card, Center, Group, SimpleGrid, Stack, Text } from "@mantine/core";
 import { memo, useEffect, useMemo } from "react";
 import { AccountProvider } from "./components/account/provider";
 import { useImmer } from "use-immer";
@@ -48,7 +48,15 @@ export const AccountsPage = memo(() => {
   if (!user.password && settings.protected) {
     return (
       <Center flex={1}>
-        <PasswordPrompt width={300} />
+        <Card withBorder shadow="sm" radius="md" w={300}>
+          <Card.Section withBorder inheritPadding py="xs">
+            <Group>
+              <Text fw={500}>Password required</Text>
+            </Group>
+          </Card.Section>
+
+          <PasswordPrompt />
+        </Card>
       </Center>
     );
   }
