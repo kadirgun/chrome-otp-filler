@@ -61,4 +61,4 @@ If the QR code you want to scan is an image element, you can use Context Menu > 
 
 ### Password Protection
 
-You can encrypt the secret keys of OTP accounts with a password. The extension encrypts the secret keys with the raw version of the password you enter and generates an HMAC SHA256 hash with a randomly generated pure key so that the password you entered can be verified later.
+You can encrypt the secret keys of OTP accounts with a password. The extension encrypts the secret keys with the raw version of the password you enter and generates an HMAC SHA256 hash with a randomly generated salt key so that the password you entered can be verified later.
