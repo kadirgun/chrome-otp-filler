@@ -7,6 +7,9 @@ import path from "path";
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react(), crx({ manifest: manifest as ManifestV3Export })],
+  esbuild: {
+    drop: ["console", "debugger"],
+  },
   resolve: {
     alias: [
       {
