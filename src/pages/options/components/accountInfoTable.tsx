@@ -8,7 +8,7 @@ export type AccountInfoTableProps = {
   show?: (keyof OTPAccount)[];
 };
 
-const defaultFields: (keyof OTPAccount)[] = ["issuer", "algorithm", "period", "digits"];
+const defaultFields: (keyof OTPAccount)[] = ["label", "algorithm", "period", "digits"];
 
 export const AccountInfoTable = memo(({ account, show = defaultFields }: AccountInfoTableProps) => {
   return (
