@@ -6,7 +6,12 @@ import path from "path";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react(), crx({ manifest: manifest as ManifestV3Export })],
+  plugins: [
+    react(),
+    crx({
+      manifest: manifest as ManifestV3Export,
+    }),
+  ],
   esbuild: {
     drop: ["console", "debugger"],
   },
@@ -30,7 +35,11 @@ export default defineConfig({
       },
     ],
   },
-  server: { hmr: { clientPort: 5173 } },
+  server: {
+    hmr: {
+      clientPort: 5173,
+    },
+  },
   build: {
     chunkSizeWarningLimit: 1024,
   },
