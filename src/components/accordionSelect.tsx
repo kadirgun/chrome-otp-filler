@@ -1,5 +1,5 @@
 import { Stack, Group, Checkbox, ScrollArea, Accordion, Center, Box, Button, Notification } from "@mantine/core";
-import { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useEffect, useMemo, useRef, memo } from "react";
 
 export type AccordionSelectProps<T = any> = {
   title: (item: T) => string;
@@ -11,7 +11,7 @@ export type AccordionSelectProps<T = any> = {
   initialSelect?: number[];
 };
 
-export const AccordionSelect = <T = any,>({
+export const AccordionSelect = memo(function <T>({
   data,
   multiple,
   onConfirm,
@@ -19,7 +19,7 @@ export const AccordionSelect = <T = any,>({
   title,
   info,
   initialSelect,
-}: AccordionSelectProps<T>) => {
+}: AccordionSelectProps<T>) {
   const [selected, setSelected] = useState<number[]>([]);
   const initialized = useRef(false);
 
@@ -107,4 +107,4 @@ export const AccordionSelect = <T = any,>({
       </Button>
     </Stack>
   );
-};
+}) as <T>(props: AccordionSelectProps<T>) => JSX.Element;
